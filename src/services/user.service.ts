@@ -17,4 +17,21 @@ export class UserService {
 
     return await this.userRepository.create(data);
   }
+
+  async getDashboard(userId: string) {
+    const data = await this.userRepositiry.getUserDashboardData(userId);
+
+    return{
+      winRate: data.stats.winRate,
+      totalUploads: data.stats.totalUploads,
+      photos: data.uploads.map( p => ({
+        id: p.id,
+        tournamentId: p.tournamentId,
+        imageUrl: p.imageUrl,
+        votes: p.votes,
+        submittedAt: p.submittedAt
+      }))
+    }
+  }
+
 }
