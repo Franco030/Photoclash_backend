@@ -7,13 +7,26 @@ export class TournamentService {
     this.tournamentRepository = new TournamentRepository();
   }
 
-  async getActiveTournament() {
-    const tournament = await this.tournamentRepository.getActiveTournament();
+  async getActiveTournaments() {
+    return await this.tournamentRepository.getActiveTournaments();
+  }
 
-    if (!tournament) {
-      throw new Error('No hay torneos activos en este momento.');
+  async getTournamentClash(tournamentId: string, currentUserId: string) {
+    const competitors = await this.tournamentRepository.getRandomClash(tournamentId, currentUserId);
+    if (competitors.length < 2) {
+      throw new Error('No hay suficientes fotografías para un duelo.');
     }
+    return {
+      competitorA: competitors[0],
+      competitorB: competitors[1]
+    };
+  }
 
-    return tournament;
+  async executeVote(tournamentId: string, currentUserId: string, winnerEntryId: string, loserEntryId: string) {
+    return await this.tournamentRepository.registerVoteTransaction(tournamentId, currentUserId, winnerEntryId, loserEntryId);
+  }
+
+  async participateInTournament(tournamentId: string, currentUserId: string, imageUrl: string) {
+    return await this.tournamentRepository.createPhotoEntry(tournamentId, currentUserId, imageUrl);
   }
 }

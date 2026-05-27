@@ -1,8 +1,8 @@
 import { prisma } from '../config/database.js';
 
 export class TournamentRepository {
-  async getActiveTournament() {
-    return await prisma.tournament.findFirst({
+  async getActiveTournaments() {
+    return await prisma.tournament.findMany({
       where: {
         status: 'active'
       },

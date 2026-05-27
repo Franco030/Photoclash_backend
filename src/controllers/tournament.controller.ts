@@ -10,8 +10,8 @@ export class TournamentController {
 
   getActive = async (_: Request, res: Response): Promise<void> => {
     try {
-      const tournament = await this.tournamentService.getActiveTournament();
-      res.json(tournament);
+      const tournaments = await this.tournamentService.getActiveTournaments();
+      res.json(tournaments);
     } catch (error: any) {
       res.status(404).json({ error: error.message });
     }
@@ -58,7 +58,9 @@ export class TournamentController {
   participate = async (req: Request, res: Response): Promise<void> => {
     const tournamentId = req.params.id;
     const currentUserId = req.headers['x-user-id'] as string;
-    const { imageUrl } = req.body;
+    
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const imageUrl = req.file ? `${baseUrl}/uploads/${req.file.filename}` : req.body.imageUrl;
 
     if (!tournamentId || !currentUserId || !imageUrl) {
       res.status(400).json({ error: 'Faltan datos obligatorios para participar.' });

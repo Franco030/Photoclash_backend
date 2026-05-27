@@ -18,6 +18,19 @@ export class UserRepository {
     });
   }
 
+  async findById(id: string) {
+    return await prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  async update(id: string, data: Partial<CreateUserInput>) {
+    return await prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
+
   async getGlobalRanking(limit: number) {
     return await prisma.user.findMany({
       orderBy: { 
@@ -53,7 +66,9 @@ export class UserRepository {
       stats: {
         winRate: userStats?.winRate ?? 0,
         totalUploads: userStats?._count.photoEntries ?? 0
-      } };
+      },
+      uploads
+    };
   }
 
 }

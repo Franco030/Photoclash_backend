@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { UserService } from '../services/user.service.js';
-import { createUserSchema } from '../schemas/user.schema.js';
+import { createUserSchema, updateUserSchema } from '../schemas/user.schema.js';
 import { z, ZodError } from 'zod';
 
 export class UserController {
@@ -25,6 +25,50 @@ export class UserController {
     }
   };
 
+  getProfile = async (req: Request, res: Response): Promise<void> => {
+    const currentUserId = req.headers['x-user-id'] as string;
+    if (!currentUserId) {
+      res.status(401).json({ error: 'Falta x-user-id en la cabecera.' });
+      return;
+    }
+
+    try {
+      const user = await this.userService.getUserProfile(currentUserId);
+      res.json(user);
+    } catch (error: any) {
+      res.status(404).json({ error: error.message });
+    }
+  };
+
+  updateProfile = async (req: Request, res: Response): Promise<void> => {
+    const currentUserId = req.headers['x-user-id'] as string;
+    if (!currentUserId) {
+      res.status(401).json({ error: 'Falta x-user-id en la cabecera.' });
+      return;
+    }
+
+    try {
+      const validatedData = updateUserSchema.parse(req.body);
+      
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      if (req.file) {
+        validatedData.avatarUrl = `${baseUrl}/uploads/${req.file.filename}`;
+      }
+
+      if (validatedData.username && !validatedData.username.startsWith('@')) {
+        validatedData.username = `@${validatedData.username}`;
+      }
+
+      const updatedUser = await this.userService.updateUserProfile(currentUserId, validatedData);
+      res.json(updatedUser);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        res.status(400).json({ errors: z.flattenError(error).fieldErrors });
+        return;
+      }
+      res.status(400).json({ error: error.message });
+    }
+  };
 
 
   getRanking = async (req: Request, res: Response): Promise<void> => {
