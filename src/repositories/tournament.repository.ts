@@ -1,11 +1,9 @@
 import { prisma } from '../config/database.js';
 
 export class TournamentRepository {
-  async getActiveTournaments() {
+  async getAllTournaments() {
     return await prisma.tournament.findMany({
-      where: {
-        status: 'active'
-      },
+      orderBy: { createdAt: 'desc' },
 
       include: {
         photoEntries: {
@@ -20,6 +18,30 @@ export class TournamentRepository {
           }
         }
       }
+    });
+  }
+
+  async getTournamentById(id: string) {
+    return await prisma.tournament.findUnique({
+      where: { id },
+      include: {
+        photoEntries: {
+          orderBy: { votes: 'desc' },
+          take: 1, // winner if closed
+          include: {
+            author: {
+              select: { id: true, username: true, avatarUrl: true }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  async closeTournament(id: string) {
+    return await prisma.tournament.update({
+      where: { id },
+      data: { status: 'closed' }
     });
   }
 

@@ -18,8 +18,10 @@ const upload = multer({ storage: storage });
 const router = Router();
 const tournamentController = new TournamentController();
 
-router.get('/', tournamentController.getActive);
+router.get('/', tournamentController.getAll);
 
+router.get('/:id', tournamentController.getInfo);
+router.post('/:id/close', tournamentController.closeTournament);
 router.get('/:id/clash', tournamentController.getClash);
 router.post('/:id/vote', tournamentController.castVote);
 router.post('/:id/participate', upload.single('image'), tournamentController.participate);

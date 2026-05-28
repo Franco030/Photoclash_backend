@@ -8,19 +8,35 @@ export class TournamentController {
     this.tournamentService = new TournamentService();
   }
 
-  getActive = async (_: Request, res: Response): Promise<void> => {
+  getAll = async (_: Request, res: Response): Promise<void> => {
     try {
-      const tournaments = await this.tournamentService.getActiveTournaments();
+      const tournaments = await this.tournamentService.getAllTournaments();
       res.json(tournaments);
     } catch (error: any) {
       res.status(404).json({ error: error.message });
     }
   };
 
+  getInfo = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const tournament = await this.tournamentService.getTournamentInfo(req.params.id as string);
+      res.json(tournament);
+    } catch (error: any) {
+      res.status(404).json({ error: error.message });
+    }
+  };
 
+  closeTournament = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const tournament = await this.tournamentService.closeTournament(req.params.id as string);
+      res.json(tournament);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
   getClash = async (req: Request, res: Response): Promise<void> => {
-    const tournamentId = req.params.id;
+    const tournamentId = req.params.id as string;
     const currentUserId = req.headers['x-user-id'] as string;
 
     if (!tournamentId || !currentUserId) {
@@ -38,7 +54,7 @@ export class TournamentController {
   };
 
   castVote = async (req: Request, res: Response): Promise<void> => {
-    const tournamentId = req.params.id;
+    const tournamentId = req.params.id as string;
     const currentUserId = req.headers['x-user-id'] as string;
     const { winnerEntryId, loserEntryId } = req.body;
 
@@ -56,7 +72,7 @@ export class TournamentController {
   };
 
   participate = async (req: Request, res: Response): Promise<void> => {
-    const tournamentId = req.params.id;
+    const tournamentId = req.params.id as string;
     const currentUserId = req.headers['x-user-id'] as string;
     
     const baseUrl = `${req.protocol}://${req.get('host')}`;

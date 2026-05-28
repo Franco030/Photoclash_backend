@@ -7,8 +7,20 @@ export class TournamentService {
     this.tournamentRepository = new TournamentRepository();
   }
 
-  async getActiveTournaments() {
-    return await this.tournamentRepository.getActiveTournaments();
+  async getAllTournaments() {
+    return await this.tournamentRepository.getAllTournaments();
+  }
+
+  async getTournamentInfo(tournamentId: string) {
+    const tournament = await this.tournamentRepository.getTournamentById(tournamentId);
+    if (!tournament) {
+      throw new Error('Torneo no encontrado.');
+    }
+    return tournament;
+  }
+
+  async closeTournament(tournamentId: string) {
+    return await this.tournamentRepository.closeTournament(tournamentId);
   }
 
   async getTournamentClash(tournamentId: string, currentUserId: string) {
