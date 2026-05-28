@@ -1,0 +1,1 @@
+const { PrismaClient } = require(@prisma/client); const prisma = new PrismaClient(); async function main() { console.log(Photos:, await prisma.photoEntry.findMany({orderBy: {submittedAt: desc}, take: 5})); console.log(Users:, await prisma.user.findMany({take: 5})); } main().catch(console.error).finally(() => prisma.$disconnect());

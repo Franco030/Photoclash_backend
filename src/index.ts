@@ -3,6 +3,7 @@ import tournamentRoutes from './routes/tournament.routes.js';
 import userRoutes from './routes/user.routes.js';
 
 const app = express();
+app.set('trust proxy', 1);
 
 import path from 'path';
 

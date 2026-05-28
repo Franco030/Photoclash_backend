@@ -27,7 +27,11 @@ export class UserRepository {
   async update(id: string, data: Partial<CreateUserInput>) {
     return await prisma.user.update({
       where: { id },
-      data,
+      data: {
+        ...(data.username !== undefined && { username: data.username }),
+        ...(data.title !== undefined && { title: data.title }),
+        ...(data.avatarUrl !== undefined && { avatarUrl: data.avatarUrl }),
+      },
     });
   }
 

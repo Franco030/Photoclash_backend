@@ -75,7 +75,8 @@ export class TournamentController {
     const tournamentId = req.params.id as string;
     const currentUserId = req.headers['x-user-id'] as string;
     
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const host = req.get('x-forwarded-host') || req.get('host');
+    const baseUrl = process.env.API_BASE_URL || `${req.protocol}://${host}`;
     const imageUrl = req.file ? `${baseUrl}/uploads/${req.file.filename}` : req.body.imageUrl;
 
     if (!tournamentId || !currentUserId || !imageUrl) {

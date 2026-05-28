@@ -50,7 +50,8 @@ export class TournamentRepository {
     const competitors: any[] = await prisma.$queryRaw`
       SELECT id, image_url as "imageUrl"
       FROM photo_entries
-      WHERE tournament_id = ${tournamentId} AND author_id != ${currentUserId}
+      WHERE tournament_id = ${tournamentId}
+        AND author_id != ${currentUserId}
       ORDER BY RAND()
       LIMIT 2
     `;

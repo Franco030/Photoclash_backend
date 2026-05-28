@@ -50,7 +50,8 @@ export class UserController {
     try {
       const validatedData = updateUserSchema.parse(req.body);
       
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const host = req.get('x-forwarded-host') || req.get('host');
+      const baseUrl = process.env.API_BASE_URL || `${req.protocol}://${host}`;
       if (req.file) {
         validatedData.avatarUrl = `${baseUrl}/uploads/${req.file.filename}`;
       }
